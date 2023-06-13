@@ -31,4 +31,17 @@ const fetchSinglePokemonData = (id) => {
   });
 };
 
-module.exports = { fetchSinglePokemonData };
+const getMoveByMoveId = (moveId) => {
+  return pokeAPI.get(`/move/${moveId}`).then(({ data }) => {
+    const formattedDescription =
+      data.flavor_text_entries[4].flavor_text.replaceAll("\n", " ");
+    return (moveObject = {
+      name: data.name,
+      pp: data.pp,
+      power: data.power,
+      description: formattedDescription,
+    });
+  });
+};
+
+module.exports = { fetchSinglePokemonData, getMoveByMoveId };
