@@ -7,14 +7,30 @@ describe("fetchSinglePokemonData", () => {
     expect(Array.isArray(output)).toBe(false);
   });
   test("returned object has the correct properties", () => {
-    const output = fetchSinglePokemonData(1);
-    expect(output).objectContaining({
-      name: expect.any(String),
-      height: expect.any(Number),
-      weight: expect.any(Number),
-      sprite: expect.any(String),
-      moves: expect.any(Array),
-      types: expect.any(Array),
+    return fetchSinglePokemonData(1).then((pokemon) => {
+      expect(pokemon).toMatchObject({
+        name: expect.any(String),
+        height: expect.any(Number),
+        weight: expect.any(Number),
+        sprite: expect.any(String),
+      });
+    });
+  });
+  test("returned object should contain array of types", () => {
+    return fetchSinglePokemonData(1).then((pokemon) => {
+      expect(pokemon.types).toEqual(["grass", "poison"]);
+    });
+  });
+  describe("fetchMovebyID", () => {
+    test("return the correct amount of move ids ", () => {
+      return fetchSinglePokemonData(1).then((pokemon) => {
+        expect(pokemon.moveIds).toHaveLength(83);
+      });
+    });
+    test("returned object should contain an array of move ids", () => {
+      return fetchSinglePokemonData(132).then((pokemon) => {
+        expect(pokemon.moveIds).toEqual([144]);
+      });
     });
   });
 });
