@@ -5,6 +5,10 @@ const pokeAPI = axios.create({
 });
 
 const fetchSinglePokemonData = (id) => {
+  pokeAPI.get(`/pokemon/${id}`).then(({ data }) => {
+    console.log(data);
+    
+  });
   return {};
 };
 
