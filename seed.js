@@ -6,7 +6,7 @@ const seed = () => {
     .query(`DROP TABLE IF EXISTS pokemon;`)
     .then(() => {
       return db.query(`CREATE TABLE pokemon (
-        id INT PRIMARY KEY,
+        id INT SERIAL PRIMARY KEY,
         pokemon VARCHAR(30) NOT NULL,
         height INT NOT NULL,
         weight INT NOT NULL,
@@ -14,9 +14,7 @@ const seed = () => {
     );`);
     })
     .then(() => {
-      return db.query("SELECT * FROM pokemon;").then(({ rows: pokemon }) => {
-        console.log(pokemon);
-      });
+      
     })
     .catch((err) => console.log(err));
 };
