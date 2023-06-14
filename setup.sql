@@ -1,0 +1,2 @@
+DROP DATABASE IF EXISTS pippatherine;
+CREATE DATABASE pippatherine;
