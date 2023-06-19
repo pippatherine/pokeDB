@@ -1,4 +1,4 @@
-const { fetchSinglePokemonData, getMoveByMoveId } = require("../api");
+const { fetchSinglePokemonData, fetchMoveByMoveId } = require("../api");
 
 describe("fetchSinglePokemonData", () => {
   test("returns an object", () => {
@@ -41,13 +41,13 @@ describe("fetchSinglePokemonData", () => {
 
   describe("getMoveByMoveId", () => {
     test("should return an object", () => {
-      return getMoveByMoveId(1).then((move) => {
+      return fetchMoveByMoveId(1).then((move) => {
         expect(Array.isArray(move)).toBe(false);
         expect(typeof move).toBe("object");
       });
     });
     test("should return an object with correct keys", () => {
-      return getMoveByMoveId(1).then((move) => {
+      return fetchMoveByMoveId(1).then((move) => {
         expect(move).toMatchObject({
           name: expect.any(String),
           pp: expect.any(Number),
