@@ -16,4 +16,29 @@ const collectMoveData = (moveIdArray) => {
   return Promise.all(movePromises);
 };
 
-module.exports = { collectPokemonData, collectMoveData };
+const formatPokemonData = (pokemonData) => {
+  const formattedData = [];
+  for (let i = 0; i < pokemonData.length; i++) {
+    const pokemon = pokemonData[i];
+    formattedData.push([
+      pokemon.id,
+      pokemon.name,
+      pokemon.weight,
+      pokemon.height,
+      pokemon.sprite,
+    ]);
+  }
+  return formattedData;
+};
+
+const formatMovesData = (movesData) => {};
+
+const formatTypesData = (typesData) => {};
+
+module.exports = {
+  collectPokemonData,
+  collectMoveData,
+  formatPokemonData,
+  formatMovesData,
+  formatTypesData,
+};

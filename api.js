@@ -19,6 +19,7 @@ const fetchSinglePokemonData = (id) => {
     });
 
     pokemonObject = {
+      id: id,
       name: data.species.name,
       weight: data.weight,
       height: data.height,
