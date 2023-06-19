@@ -2,6 +2,7 @@ const {
   collectPokemonData,
   collectMoveData,
   formatPokemonData,
+  formatMovesData,
 } = require("../utils");
 
 describe("collectAllPokemonData", () => {
@@ -202,6 +203,157 @@ describe("formatPokemonData", () => {
       },
     ];
     formatPokemonData(pokemonData);
+    expect(pokemonData).toEqual(pokemonDataTwin);
+  });
+});
+
+describe("formatMovesData", () => {
+  test("should return an array of arrays", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+      {
+        id: 148,
+        name: "dragonair",
+        weight: 165,
+        height: 40,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/148.png",
+        types: ["dragon"],
+        moveIds: [20, 21],
+      },
+
+      {
+        id: 149,
+        name: "dragonite",
+        weight: 2100,
+        height: 22,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png",
+        types: ["dragon", "flying"],
+        moveIds: [5, 7, 8, 9],
+      },
+    ];
+    const result = formatMovesData(pokemonData);
+    expect(result).toHaveLength(9);
+    expect(result).toBeInstanceOf(Array);
+    result.forEach((aPokemonsMoves) => {
+      expect(aPokemonsMoves).toBeInstanceOf(Array);
+    });
+  });
+  test("should return single pokemons moves in a nested array", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+    ];
+    const expected = [
+      [147, 20],
+      [147, 21],
+      [147, 29],
+    ];
+    expect(formatMovesData(pokemonData)).toEqual(expected);
+  });
+  test("should return multiple pokemons moves in a nested array", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+      {
+        id: 149,
+        name: "dragonite",
+        weight: 2100,
+        height: 22,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png",
+        types: ["dragon", "flying"],
+        moveIds: [5, 7, 8, 9],
+      },
+    ];
+    const expected = [
+      [147, 20],
+      [147, 21],
+      [147, 29],
+      [149, 5],
+      [149, 7],
+      [149, 8],
+      [149, 9],
+    ];
+    expect(formatMovesData(pokemonData)).toEqual(expected);
+  });
+  test("should return new array", () => {
+    const input = [];
+    const output = formatMovesData(input);
+    expect(input).not.toBe(output);
+  });
+  test("should not mutate array", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+      {
+        id: 149,
+        name: "dragonite",
+        weight: 2100,
+        height: 22,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png",
+        types: ["dragon", "flying"],
+        moveIds: [5, 7, 8, 9],
+      },
+    ];
+    const pokemonDataTwin = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+      {
+        id: 149,
+        name: "dragonite",
+        weight: 2100,
+        height: 22,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png",
+        types: ["dragon", "flying"],
+        moveIds: [5, 7, 8, 9],
+      },
+    ];
+    formatMovesData(pokemonData);
     expect(pokemonData).toEqual(pokemonDataTwin);
   });
 });
