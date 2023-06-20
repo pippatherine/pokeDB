@@ -2,7 +2,7 @@ const {
   collectPokemonData,
   collectMoveData,
   formatPokemonData,
-  formatMovesData,
+  formatMovesArray,
   formatMovesJunctionData,
 } = require("../utils");
 
@@ -306,7 +306,7 @@ describe("formatMovesJunctionData", () => {
   });
   test("should return new array", () => {
     const input = [];
-    const output = formatMovesData(input);
+    const output = formatMovesJunctionData(input);
     expect(input).not.toBe(output);
   });
   test("should not mutate array", () => {
@@ -359,7 +359,7 @@ describe("formatMovesJunctionData", () => {
   });
 });
 describe("formatMovesArray", () => {
-  test("should return an array of arrays", () => {
+  test("should return an array", () => {
     const pokemonData = [
       {
         id: 147,
@@ -375,7 +375,113 @@ describe("formatMovesArray", () => {
     expect(formatMovesArray(pokemonData)).toBeInstanceOf(Array);
   });
 
-  test('should return an array of move', () => {
-    
+  test("when passed a single pokemon object array should return an array of their moves", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+    ];
+    expect(formatMovesArray(pokemonData)).toEqual([20, 21, 29]);
+  });
+  test("when passed a multiple pokemon object array should return an array of their moves", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+      {
+        id: 149,
+        name: "dragonite",
+        weight: 2100,
+        height: 22,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png",
+        types: ["dragon", "flying"],
+        moveIds: [5, 7, 8, 9],
+      },
+    ];
+    expect(formatMovesArray(pokemonData)).toEqual([20, 21, 29, 5, 7, 8, 9]);
+  });
+  test("should not repeat any moves within the array", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29, 5, 7],
+      },
+      {
+        id: 149,
+        name: "dragonite",
+        weight: 2100,
+        height: 22,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png",
+        types: ["dragon", "flying"],
+        moveIds: [5, 7, 8, 9],
+      },
+    ];
+    expect(formatMovesArray(pokemonData)).toEqual([20, 21, 29, 5, 7, 8, 9]);
+  });
+  test("should not mutate the input", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+    ];
+    const pokemonDataTwin = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+    ];
+    formatMovesArray(pokemonData);
+    expect(pokemonData).toEqual(pokemonDataTwin);
+  });
+  test("should return a new array ", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+    ];
+    const output = formatMovesArray(pokemonData);
+    expect(output).not.toBe(pokemonData);
   });
 });

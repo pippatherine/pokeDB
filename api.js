@@ -7,7 +7,7 @@ const pokeAPI = axios.create({
 const fetchSinglePokemonData = (id) => {
   let pokemonObject = {};
 
-  return pokeAPI.get(`/pokemon/${id}`).then(({ data }) => {
+  return pokeAPI.get(`/pokemon/${id}`, { timeout: 10000 }).then(({ data }) => {
     const typesArray = data.types.map((typeObject) => {
       return typeObject.type.name;
     });
@@ -33,7 +33,7 @@ const fetchSinglePokemonData = (id) => {
 };
 
 const fetchMoveByMoveId = (moveId) => {
-  return pokeAPI.get(`/move/${moveId}`).then(({ data }) => {
+  return pokeAPI.get(`/move/${moveId}`, { timeout: 10000 }).then(({ data }) => {
     const formattedDescription =
       data.flavor_text_entries[4].flavor_text.replaceAll("\n", " ");
     return (moveObject = {

@@ -32,9 +32,15 @@ const formatPokemonData = (pokemonData) => {
 };
 
 const formatMovesArray = (pokemonData) => {
-  return [];
+  let newMovesArray = [];
+  for (let i = 0; i < pokemonData.length; i++) {
+    let currentPokemon = pokemonData[i];
+    newMovesArray = [...newMovesArray, ...currentPokemon.moveIds];
+  }
+  const newUniqueMoves = new Set(newMovesArray);
+
+  return [...newUniqueMoves];
 };
-// need to use pokemonData to populate moves table
 
 const formatMovesJunctionData = (pokemonData) => {
   const formattedMovesJunctionData = [];
