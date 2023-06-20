@@ -49,11 +49,17 @@ describe("fetchSinglePokemonData", () => {
     test("should return an object with correct keys", () => {
       return fetchMoveByMoveId(1).then((move) => {
         expect(move).toMatchObject({
+          id: expect.any(Number),
           name: expect.any(String),
           pp: expect.any(Number),
           power: expect.any(Number),
           description: expect.any(String),
         });
+      });
+    });
+    test('if move has no flavour text, replaces with "No description found"', () => {
+      return fetchMoveByMoveId(851).then((move) => {
+        expect(move.description).toBe("No description found");
       });
     });
   });

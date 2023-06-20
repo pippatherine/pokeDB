@@ -2,8 +2,9 @@ const {
   collectPokemonData,
   collectMoveData,
   formatPokemonData,
-  formatMovesArray,
+  arrangeMovesArray,
   formatMovesJunctionData,
+  formatData,
 } = require("../utils");
 
 describe("collectAllPokemonData", () => {
@@ -358,7 +359,7 @@ describe("formatMovesJunctionData", () => {
     expect(pokemonData).toEqual(pokemonDataTwin);
   });
 });
-describe("formatMovesArray", () => {
+describe("arrangeMovesArray", () => {
   test("should return an array", () => {
     const pokemonData = [
       {
@@ -372,7 +373,7 @@ describe("formatMovesArray", () => {
         moveIds: [20, 21, 29],
       },
     ];
-    expect(formatMovesArray(pokemonData)).toBeInstanceOf(Array);
+    expect(arrangeMovesArray(pokemonData)).toBeInstanceOf(Array);
   });
 
   test("when passed a single pokemon object array should return an array of their moves", () => {
@@ -388,7 +389,7 @@ describe("formatMovesArray", () => {
         moveIds: [20, 21, 29],
       },
     ];
-    expect(formatMovesArray(pokemonData)).toEqual([20, 21, 29]);
+    expect(arrangeMovesArray(pokemonData)).toEqual([20, 21, 29]);
   });
   test("when passed a multiple pokemon object array should return an array of their moves", () => {
     const pokemonData = [
@@ -413,7 +414,7 @@ describe("formatMovesArray", () => {
         moveIds: [5, 7, 8, 9],
       },
     ];
-    expect(formatMovesArray(pokemonData)).toEqual([20, 21, 29, 5, 7, 8, 9]);
+    expect(arrangeMovesArray(pokemonData)).toEqual([20, 21, 29, 5, 7, 8, 9]);
   });
   test("should not repeat any moves within the array", () => {
     const pokemonData = [
@@ -438,7 +439,7 @@ describe("formatMovesArray", () => {
         moveIds: [5, 7, 8, 9],
       },
     ];
-    expect(formatMovesArray(pokemonData)).toEqual([20, 21, 29, 5, 7, 8, 9]);
+    expect(arrangeMovesArray(pokemonData)).toEqual([20, 21, 29, 5, 7, 8, 9]);
   });
   test("should not mutate the input", () => {
     const pokemonData = [
@@ -465,7 +466,7 @@ describe("formatMovesArray", () => {
         moveIds: [20, 21, 29],
       },
     ];
-    formatMovesArray(pokemonData);
+    arrangeMovesArray(pokemonData);
     expect(pokemonData).toEqual(pokemonDataTwin);
   });
   test("should return a new array ", () => {
@@ -481,7 +482,110 @@ describe("formatMovesArray", () => {
         moveIds: [20, 21, 29],
       },
     ];
-    const output = formatMovesArray(pokemonData);
+    const output = arrangeMovesArray(pokemonData);
     expect(output).not.toBe(pokemonData);
+  });
+});
+describe("formatData", () => {
+  test("should return an array of arrays", () => {
+    const testData = [
+      {
+        id: 147,
+        name: "katherine",
+        hat: false,
+      },
+      {
+        id: 148,
+        name: "pippa",
+        hat: true,
+      },
+    ];
+    const listOfKeys = ["id", "name"];
+    const result = formatData(testData, listOfKeys);
+    expect(result).toBeInstanceOf(Array);
+    expect(result).toHaveLength(2);
+    result.forEach((person) => {
+      expect(person).toBeInstanceOf(Array);
+    });
+  });
+  test("should take single object array and return array containing array with keys passed in second arg", () => {
+    const testData = [
+      {
+        id: 148,
+        name: "pippa",
+        hat: true,
+      },
+    ];
+    const listOfKeys = ["id", "name"];
+    const result = formatData(testData, listOfKeys);
+    const expected = [[148, "pippa"]];
+    expect(result).toEqual(expected);
+  });
+  test("should take single object array and return array containing array with keys passed in second arg", () => {
+    const testData = [
+      {
+        id: 148,
+        name: "pippa",
+        hat: true,
+      },
+      {
+        id: 147,
+        name: "katherine",
+        hat: false,
+      },
+    ];
+    const listOfKeys = ["id", "name"];
+    const result = formatData(testData, listOfKeys);
+    const expected = [
+      [148, "pippa"],
+      [147, "katherine"],
+    ];
+    expect(result).toEqual(expected);
+  });
+  test("should return new array", () => {
+    const testData = [
+      {
+        id: 148,
+        name: "pippa",
+        hat: true,
+      },
+      {
+        id: 147,
+        name: "katherine",
+        hat: false,
+      },
+    ];
+    const listOfKeys = ["id", "name"];
+    const result = formatData(testData, listOfKeys);
+    expect(result).not.toBe(testData);
+  });
+  test("should not mutate array", () => {
+    const testData = [
+      {
+        id: 148,
+        name: "pippa",
+        hat: true,
+      },
+      {
+        id: 147,
+        name: "katherine",
+        hat: false,
+      },
+    ];
+    const testDataTwin = [
+      {
+        id: 148,
+        name: "pippa",
+        hat: true,
+      },
+      {
+        id: 147,
+        name: "katherine",
+        hat: false,
+      },
+    ];
+    const listOfKeys = ["id", "name"];
+    formatData(testData, listOfKeys);
+    expect(testData).toEqual(testDataTwin);
   });
 });

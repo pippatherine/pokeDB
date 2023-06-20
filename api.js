@@ -34,9 +34,17 @@ const fetchSinglePokemonData = (id) => {
 
 const fetchMoveByMoveId = (moveId) => {
   return pokeAPI.get(`/move/${moveId}`, { timeout: 10000 }).then(({ data }) => {
-    const formattedDescription =
-      data.flavor_text_entries[4].flavor_text.replaceAll("\n", " ");
+    let formattedDescription;
+    if (data.effect_entries.length === 0) {
+      formattedDescription = "No description found";
+    } else {
+      formattedDescription = data.effect_entries[0].effect.replaceAll(
+        "\n",
+        " "
+      );
+    }
     return (moveObject = {
+      id: data.id,
       name: data.name,
       pp: data.pp,
       power: data.power,

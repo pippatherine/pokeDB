@@ -4,8 +4,9 @@ const {
   collectPokemonData,
   formatPokemonData,
   formatMovesJunctionData,
-  formatMovesArray,
+  arrangeMovesArray,
   collectMoveData,
+  formatData,
 } = require("./utils");
 
 const seed = () => {
@@ -29,9 +30,9 @@ const seed = () => {
         return db.query(`CREATE TABLE moves (
           move_id INT NOT NULL,
           name VARCHAR(30) NOT NULL,
-          description VARCHAR(255) NOT NULL, 
+          description VARCHAR, 
           pp INT NOT NULL, 
-          power INT NOT NULL
+          power INT q
            );`);
       })
 
@@ -42,8 +43,10 @@ const seed = () => {
         return collectPokemonData(15);
       })
       .then((pokemon) => {
+        console.log(pokemon);
         pokemonData = pokemon;
-        const arrayOfPokemonData = formatPokemonData(pokemon);
+        const pokemonKeys = ["id", "name", "weight", "height", "sprite"];
+        const arrayOfPokemonData = formatData(pokemon, pokemonKeys);
         const insertPokemonQuery = format(
           `INSERT INTO pokemon(id,pokemon,weight,height,sprite) VALUES %L RETURNING *`,
           arrayOfPokemonData
@@ -51,11 +54,21 @@ const seed = () => {
         return db.query(insertPokemonQuery);
       })
       .then(() => {
-        const moveIdsArray = formatMovesArray(pokemonData);
+        const moveIdsArray = arrangeMovesArray(pokemonData);
         return collectMoveData(moveIdsArray);
       })
       .then((moves) => {
-        console.log(moves);
+        const listOfKeys = ["id", "name", "pp", "power", "description"];
+        const formattedMoves = formatData(moves, listOfKeys);
+        const insertMovesQuery = format(
+          `INSERT INTO moves 
+          (move_id, name, pp, power, description )
+          VALUES
+          %L
+          RETURNING *`,
+          formattedMoves
+        );
+        return db.query(insertMovesQuery);
       })
       // .then(() => {
       //   const arrayOfMovesData = formatMovesJunctionData(pokemonData);
