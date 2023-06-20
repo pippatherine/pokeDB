@@ -27,22 +27,18 @@ const arrangeMovesArray = (pokemonData) => {
   return [...newUniqueMoves];
 };
 
-const formatMovesJunctionData = (pokemonData) => {
-  const formattedMovesJunctionData = [];
-
+const formatJunctionData = (pokemonData, key="moveIds") => {
+  const formattedJunctionData = [];
   for (let i = 0; i < pokemonData.length; i++) {
     const pokemon = pokemonData[i];
-    for (let j = 0; j < pokemon.moveIds.length; j++) {
-      formattedMovesJunctionData.push([pokemon.id, pokemon.moveIds[j]]);
+    for (let j = 0; j < pokemon[key].length; j++) {
+      formattedJunctionData.push([pokemon.id, pokemon[key][j]]);
     }
   }
-
-  return formattedMovesJunctionData;
+  return formattedJunctionData;
 };
 
-const formatTypesData = (pokemonData) => {
-  return [];
-};
+
 
 const formatData = (data, listOfKeys) => {
   const dataArray = [];
@@ -62,9 +58,7 @@ const formatData = (data, listOfKeys) => {
 module.exports = {
   collectPokemonData,
   collectMoveData,
-  formatPokemonData,
-  formatMovesJunctionData,
+  formatJunctionData,
   arrangeMovesArray,
-  formatTypesData,
   formatData,
 };

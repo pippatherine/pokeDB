@@ -1,10 +1,10 @@
 const {
   collectPokemonData,
   collectMoveData,
-  formatPokemonData,
   arrangeMovesArray,
-  formatMovesJunctionData,
+  formatJunctionData,
   formatData,
+
 } = require("../utils");
 
 describe("collectAllPokemonData", () => {
@@ -54,7 +54,7 @@ describe("collectMoveData", () => {
   });
 });
 
-describe("formatMovesJunctionData", () => {
+describe("formatJunctionData", () => {
   test("should return an array of arrays", () => {
     const pokemonData = [
       {
@@ -89,7 +89,7 @@ describe("formatMovesJunctionData", () => {
         moveIds: [5, 7, 8, 9],
       },
     ];
-    const result = formatMovesJunctionData(pokemonData);
+    const result = formatJunctionData(pokemonData);
     expect(result).toHaveLength(9);
     expect(result).toBeInstanceOf(Array);
     result.forEach((aPokemonsMoves) => {
@@ -114,7 +114,7 @@ describe("formatMovesJunctionData", () => {
       [147, 21],
       [147, 29],
     ];
-    expect(formatMovesJunctionData(pokemonData)).toEqual(expected);
+    expect(formatJunctionData(pokemonData)).toEqual(expected);
   });
   test("should return multiple pokemons moves in a nested array", () => {
     const pokemonData = [
@@ -148,11 +148,11 @@ describe("formatMovesJunctionData", () => {
       [149, 8],
       [149, 9],
     ];
-    expect(formatMovesJunctionData(pokemonData)).toEqual(expected);
+    expect(formatJunctionData(pokemonData)).toEqual(expected);
   });
   test("should return new array", () => {
     const input = [];
-    const output = formatMovesJunctionData(input);
+    const output = formatJunctionData(input);
     expect(input).not.toBe(output);
   });
   test("should not mutate array", () => {
@@ -200,8 +200,38 @@ describe("formatMovesJunctionData", () => {
         moveIds: [5, 7, 8, 9],
       },
     ];
-    formatMovesJunctionData(pokemonData);
+    formatJunctionData(pokemonData);
     expect(pokemonData).toEqual(pokemonDataTwin);
+  });
+  test("should take a key parameter, which alters the values taken from the data", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+      {
+        id: 149,
+        name: "dragonite",
+        weight: 2100,
+        height: 22,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png",
+        types: ["dragon", "flying"],
+        moveIds: [5, 7, 8, 9],
+      },
+    ];
+    const result = formatJunctionData(pokemonData, "types");
+    const expected = [
+      [147, "dragon"],
+      [149, "dragon"],
+      [149, "flying"],
+    ];
   });
 });
 
@@ -436,3 +466,5 @@ describe("formatData", () => {
     expect(testData).toEqual(testDataTwin);
   });
 });
+
+
