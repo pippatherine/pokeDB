@@ -31,6 +31,11 @@ const formatPokemonData = (pokemonData) => {
   return formattedData;
 };
 
+const formatMovesArray = (pokemonData) => {
+  return [];
+};
+// need to use pokemonData to populate moves table
+
 const formatMovesJunctionData = (pokemonData) => {
   const formattedMovesJunctionData = [];
 
@@ -44,14 +49,15 @@ const formatMovesJunctionData = (pokemonData) => {
   return formattedMovesJunctionData;
 };
 
-// need to use pokemonData to populate moves table
-
-const formatTypesData = (typesData) => {};
+const formatTypesData = (pokemonData) => {
+  return [];
+};
 
 module.exports = {
   collectPokemonData,
   collectMoveData,
   formatPokemonData,
   formatMovesJunctionData,
+  formatMovesArray,
   formatTypesData,
 };

@@ -3,6 +3,7 @@ const {
   collectMoveData,
   formatPokemonData,
   formatMovesData,
+  formatMovesJunctionData,
 } = require("../utils");
 
 describe("collectAllPokemonData", () => {
@@ -207,7 +208,7 @@ describe("formatPokemonData", () => {
   });
 });
 
-describe("formatMovesData", () => {
+describe("formatMovesJunctionData", () => {
   test("should return an array of arrays", () => {
     const pokemonData = [
       {
@@ -242,7 +243,7 @@ describe("formatMovesData", () => {
         moveIds: [5, 7, 8, 9],
       },
     ];
-    const result = formatMovesData(pokemonData);
+    const result = formatMovesJunctionData(pokemonData);
     expect(result).toHaveLength(9);
     expect(result).toBeInstanceOf(Array);
     result.forEach((aPokemonsMoves) => {
@@ -267,7 +268,7 @@ describe("formatMovesData", () => {
       [147, 21],
       [147, 29],
     ];
-    expect(formatMovesData(pokemonData)).toEqual(expected);
+    expect(formatMovesJunctionData(pokemonData)).toEqual(expected);
   });
   test("should return multiple pokemons moves in a nested array", () => {
     const pokemonData = [
@@ -301,7 +302,7 @@ describe("formatMovesData", () => {
       [149, 8],
       [149, 9],
     ];
-    expect(formatMovesData(pokemonData)).toEqual(expected);
+    expect(formatMovesJunctionData(pokemonData)).toEqual(expected);
   });
   test("should return new array", () => {
     const input = [];
@@ -353,7 +354,28 @@ describe("formatMovesData", () => {
         moveIds: [5, 7, 8, 9],
       },
     ];
-    formatMovesData(pokemonData);
+    formatMovesJunctionData(pokemonData);
     expect(pokemonData).toEqual(pokemonDataTwin);
+  });
+});
+describe("formatMovesArray", () => {
+  test("should return an array of arrays", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+    ];
+    expect(formatMovesArray(pokemonData)).toBeInstanceOf(Array);
+  });
+
+  test('should return an array of move', () => {
+    
   });
 });
