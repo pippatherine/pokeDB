@@ -47,7 +47,7 @@ const seed = () => {
     })
     .then(() => {
       return db.query(`CREATE TABLE types (
-        id INT REFERENCES pokemon(id),
+        pokemon_id INT REFERENCES pokemon(id),
         type VARCHAR(30)
       )`);
     })
@@ -94,7 +94,7 @@ const seed = () => {
       const insertTypesDataQuery = format(
         `
       INSERT INTO types
-      (id,type)
+      (pokemon_id,type)
       VALUES
       %L;
       `,
