@@ -1,10 +1,10 @@
 const {
   collectPokemonData,
   collectMoveData,
-  arrangeMovesArray,
+  findUniqueValues,
   formatJunctionData,
   formatData,
-
+  createLookupTable,
 } = require("../utils");
 
 describe("collectAllPokemonData", () => {
@@ -233,9 +233,42 @@ describe("formatJunctionData", () => {
       [149, "flying"],
     ];
   });
+  test("if given lookup table should use it to define returned data ", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+      {
+        id: 149,
+        name: "dragonite",
+        weight: 2100,
+        height: 22,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png",
+        types: ["dragon", "flying"],
+        moveIds: [5, 7, 8, 9],
+      },
+    ];
+
+    const lookupTable = { dragon: 1, flying: 2 };
+    const result = formatJunctionData(pokemonData, "types", lookupTable);
+    const expected = [
+      [147, 1],
+      [149, 1],
+      [149, 2],
+    ];
+    expect(result).toEqual(expected);
+  });
 });
 
-describe("arrangeMovesArray", () => {
+describe("findUniqueValues", () => {
   test("should return an array", () => {
     const pokemonData = [
       {
@@ -249,7 +282,7 @@ describe("arrangeMovesArray", () => {
         moveIds: [20, 21, 29],
       },
     ];
-    expect(arrangeMovesArray(pokemonData)).toBeInstanceOf(Array);
+    expect(findUniqueValues(pokemonData)).toBeInstanceOf(Array);
   });
 
   test("when passed a single pokemon object array should return an array of their moves", () => {
@@ -265,7 +298,7 @@ describe("arrangeMovesArray", () => {
         moveIds: [20, 21, 29],
       },
     ];
-    expect(arrangeMovesArray(pokemonData)).toEqual([20, 21, 29]);
+    expect(findUniqueValues(pokemonData)).toEqual([20, 21, 29]);
   });
   test("when passed a multiple pokemon object array should return an array of their moves", () => {
     const pokemonData = [
@@ -290,8 +323,9 @@ describe("arrangeMovesArray", () => {
         moveIds: [5, 7, 8, 9],
       },
     ];
-    expect(arrangeMovesArray(pokemonData)).toEqual([20, 21, 29, 5, 7, 8, 9]);
+    expect(findUniqueValues(pokemonData)).toEqual([20, 21, 29, 5, 7, 8, 9]);
   });
+
   test("should not repeat any moves within the array", () => {
     const pokemonData = [
       {
@@ -315,7 +349,7 @@ describe("arrangeMovesArray", () => {
         moveIds: [5, 7, 8, 9],
       },
     ];
-    expect(arrangeMovesArray(pokemonData)).toEqual([20, 21, 29, 5, 7, 8, 9]);
+    expect(findUniqueValues(pokemonData)).toEqual([20, 21, 29, 5, 7, 8, 9]);
   });
   test("should not mutate the input", () => {
     const pokemonData = [
@@ -342,7 +376,7 @@ describe("arrangeMovesArray", () => {
         moveIds: [20, 21, 29],
       },
     ];
-    arrangeMovesArray(pokemonData);
+    findUniqueValues(pokemonData);
     expect(pokemonData).toEqual(pokemonDataTwin);
   });
   test("should return a new array ", () => {
@@ -358,8 +392,34 @@ describe("arrangeMovesArray", () => {
         moveIds: [20, 21, 29],
       },
     ];
-    const output = arrangeMovesArray(pokemonData);
+    const output = findUniqueValues(pokemonData);
     expect(output).not.toBe(pokemonData);
+  });
+  test("should take a second argument and find corresponding values ", () => {
+    const pokemonData = [
+      {
+        id: 147,
+        name: "dratini",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon"],
+        moveIds: [20, 21, 29],
+      },
+      {
+        id: 147,
+        name: "dragon",
+        weight: 33,
+        height: 18,
+        sprite:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png",
+        types: ["dragon", "normal"],
+        moveIds: [20, 21, 29],
+      },
+    ];
+    const key = "types";
+    expect(findUniqueValues(pokemonData, key)).toEqual(["dragon", "normal"]);
   });
 });
 
@@ -467,4 +527,31 @@ describe("formatData", () => {
   });
 });
 
-
+describe("createLookupTable", () => {
+  test("returns empty object when given no data", () => {
+    expect(createLookupTable([])).toEqual({});
+  });
+  test("returns lookup table when given data", () => {
+    const data = [
+      { type_id: 1, type: "grass" },
+      { type_id: 2, type: "poison" },
+      { type_id: 3, type: "fire" },
+    ];
+    const expected = { grass: 1, poison: 2, fire: 3 };
+    expect(createLookupTable(data)).toEqual(expected);
+  });
+  test("should not mutate the input array", () => {
+    const data = [
+      { type_id: 1, type: "grass" },
+      { type_id: 2, type: "poison" },
+      { type_id: 3, type: "fire" },
+    ];
+    const dataTwin = [
+      { type_id: 1, type: "grass" },
+      { type_id: 2, type: "poison" },
+      { type_id: 3, type: "fire" },
+    ];
+    createLookupTable(data);
+    expect(data).toEqual(dataTwin);
+  });
+});

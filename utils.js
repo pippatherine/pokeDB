@@ -16,29 +16,32 @@ const collectMoveData = (moveIdArray) => {
   return Promise.all(movePromises);
 };
 
-const arrangeMovesArray = (pokemonData) => {
-  let newMovesArray = [];
+const findUniqueValues = (pokemonData, key = "moveIds") => {
+  let newArray = [];
   for (let i = 0; i < pokemonData.length; i++) {
     let currentPokemon = pokemonData[i];
-    newMovesArray = [...newMovesArray, ...currentPokemon.moveIds];
+    newArray = [...newArray, ...currentPokemon[key]];
   }
-  const newUniqueMoves = new Set(newMovesArray);
+  const newUniqueValues = new Set(newArray);
 
-  return [...newUniqueMoves];
+  return [...newUniqueValues];
 };
 
-const formatJunctionData = (pokemonData, key="moveIds") => {
+const formatJunctionData = (pokemonData, key = "moveIds", lookupTable) => {
   const formattedJunctionData = [];
+
   for (let i = 0; i < pokemonData.length; i++) {
     const pokemon = pokemonData[i];
     for (let j = 0; j < pokemon[key].length; j++) {
-      formattedJunctionData.push([pokemon.id, pokemon[key][j]]);
+      let secondValue = lookupTable
+        ? lookupTable[pokemon[key][j]]
+        : pokemon[key][j];
+
+      formattedJunctionData.push([pokemon.id, secondValue]);
     }
   }
   return formattedJunctionData;
 };
-
-
 
 const formatData = (data, listOfKeys) => {
   const dataArray = [];
@@ -55,10 +58,19 @@ const formatData = (data, listOfKeys) => {
   return dataArray;
 };
 
+const createLookupTable = (data, key = "type", value = "type_id") => {
+  const lookup = {};
+  data.forEach((typeObject) => {
+    lookup[typeObject[key]] = typeObject[value];
+  });
+  return lookup;
+};
+
 module.exports = {
   collectPokemonData,
   collectMoveData,
   formatJunctionData,
-  arrangeMovesArray,
+  findUniqueValues,
   formatData,
+  createLookupTable,
 };

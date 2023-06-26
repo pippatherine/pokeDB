@@ -3,9 +3,10 @@ const format = require("pg-format");
 const {
   collectPokemonData,
   formatJunctionData,
-  arrangeMovesArray,
+  findUniqueValues,
   collectMoveData,
   formatData,
+  createLookupTable,
 } = require("./utils");
 
 const seed = () => {
@@ -50,7 +51,7 @@ const seed = () => {
     })
     .then(() => {
       return db.query(`CREATE TABLE types (
-        type_id INT SERIAL PRIMARY KEY,
+        type_id SERIAL PRIMARY KEY,
         type VARCHAR(30)
       )`);
     })
@@ -74,7 +75,7 @@ const seed = () => {
       return db.query(insertPokemonQuery);
     })
     .then(() => {
-      const moveIdsArray = arrangeMovesArray(pokemonData);
+      const moveIdsArray = findUniqueValues(pokemonData);
       return collectMoveData(moveIdsArray);
     })
     .then((moves) => {
@@ -99,18 +100,38 @@ const seed = () => {
       return db.query(insertMovesDataQuery);
     })
     .then(() => {
-      const arrayOfTypes = 
-      // const arrayOfTypesData = formatJunctionData(pokemonData, "types");
-      // const insertTypesDataQuery = format(
-      //   `
-      // INSERT INTO types
-      // (pokemon_id,type)
-      // VALUES
-      // %L;
-      // `,
-      //   arrayOfTypesData
-      // );
-      // return db.query(insertTypesDataQuery);
+      const arrayOfTypes = findUniqueValues(pokemonData, "types");
+
+      const formattedTypes = arrayOfTypes.map((type) => {
+        return [type];
+      });
+
+      const insertTypesQuery = format(
+        `INSERT INTO types 
+        (type)
+        VALUES %L RETURNING *;`,
+        formattedTypes
+      );
+      return db.query(insertTypesQuery);
+    })
+    .then(({ rows: insertedTypesData }) => {
+      const lookupTable = createLookupTable(insertedTypesData);
+
+      const arrayOfTypesData = formatJunctionData(
+        pokemonData,
+        "types",
+        lookupTable
+      );
+      const insertTypesDataQuery = format(
+        `
+      INSERT INTO pokemon_types
+      (pokemon_id,type_id)
+      VALUES
+      %L;
+      `,
+        arrayOfTypesData
+      );
+      return db.query(insertTypesDataQuery);
     })
     .catch((err) => console.log(err));
 };
