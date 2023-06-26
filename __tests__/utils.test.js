@@ -554,4 +554,5 @@ describe("createLookupTable", () => {
     createLookupTable(data);
     expect(data).toEqual(dataTwin);
   });
+  
 });
