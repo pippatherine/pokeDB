@@ -13,10 +13,13 @@ const seed = () => {
   return db
     .query(`DROP TABLE IF EXISTS pokemon_moves;`)
     .then(() => {
-      return db.query(`DROP TABLE IF EXISTS types`);
+      return db.query(`DROP TABLE IF EXISTS pokemon_types`);
     })
     .then(() => {
       return db.query(`DROP TABLE IF EXISTS moves;`);
+    })
+    .then(() => {
+      return db.query(`DROP TABLE IF EXISTS types`);
     })
     .then(() => {
       return db.query(`DROP TABLE IF EXISTS pokemon`);
@@ -41,14 +44,20 @@ const seed = () => {
     })
     .then(() => {
       return db.query(`CREATE TABLE pokemon_moves (
-          id INT REFERENCES pokemon(id),
+          pokemon_id INT REFERENCES pokemon(id),
           move_id INT REFERENCES moves(move_id)
         )`);
     })
     .then(() => {
       return db.query(`CREATE TABLE types (
-        pokemon_id INT REFERENCES pokemon(id),
+        type_id INT SERIAL PRIMARY KEY,
         type VARCHAR(30)
+      )`);
+    })
+    .then(() => {
+      return db.query(`CREATE TABLE pokemon_types (
+        pokemon_id INT REFERENCES pokemon(id),
+        type_id INT REFERENCES types(type_id)
       )`);
     })
     .then(() => {
@@ -84,23 +93,24 @@ const seed = () => {
     .then(() => {
       const arrayOfMovesData = formatJunctionData(pokemonData);
       const insertMovesDataQuery = format(
-        `INSERT INTO pokemon_moves (id, move_id) VALUES %L;`,
+        `INSERT INTO pokemon_moves (pokemon_id, move_id) VALUES %L;`,
         arrayOfMovesData
       );
       return db.query(insertMovesDataQuery);
     })
     .then(() => {
-      const arrayOfTypesData = formatJunctionData(pokemonData, "types");
-      const insertTypesDataQuery = format(
-        `
-      INSERT INTO types
-      (pokemon_id,type)
-      VALUES
-      %L;
-      `,
-        arrayOfTypesData
-      );
-      return db.query(insertTypesDataQuery);
+      const arrayOfTypes = 
+      // const arrayOfTypesData = formatJunctionData(pokemonData, "types");
+      // const insertTypesDataQuery = format(
+      //   `
+      // INSERT INTO types
+      // (pokemon_id,type)
+      // VALUES
+      // %L;
+      // `,
+      //   arrayOfTypesData
+      // );
+      // return db.query(insertTypesDataQuery);
     })
     .catch((err) => console.log(err));
 };
