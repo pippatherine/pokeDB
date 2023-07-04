@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "setup-dbs": "psql -f setup.sql",
-    "seed": "PGDATABASE=pippatherine node seed.js"
+    "setup-dbs": "psql -f setup.sql && PGDATABASE=pippatherine node setup.js",
+    "update-dbs": "PGDATABASE=pippatherine node updateDB.js"
   },
   "repository": {
     "type": "git",

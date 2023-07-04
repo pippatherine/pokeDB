@@ -1,4 +1,3 @@
-const db = require("./connection");
 const format = require("pg-format");
 const {
   collectPokemonData,
@@ -8,62 +7,16 @@ const {
   formatData,
   createLookupTable,
 } = require("./utils");
+const db = require("./connection");
 
-const seed = () => {
-  let pokemonData;
-  return db
-    .query(`DROP TABLE IF EXISTS pokemon_moves;`)
-    .then(() => {
-      return db.query(`DROP TABLE IF EXISTS pokemon_types`);
-    })
-    .then(() => {
-      return db.query(`DROP TABLE IF EXISTS moves;`);
-    })
-    .then(() => {
-      return db.query(`DROP TABLE IF EXISTS types`);
-    })
-    .then(() => {
-      return db.query(`DROP TABLE IF EXISTS pokemon`);
-    })
-    .then(() => {
-      return db.query(`CREATE TABLE pokemon (
-        id INT PRIMARY KEY NOT NULL,
-        pokemon VARCHAR(30) NOT NULL,
-        weight INT NOT NULL,
-        height INT NOT NULL,
-        sprite VARCHAR(255) NOT NULL
-    );`);
-    })
-    .then(() => {
-      return db.query(`CREATE TABLE moves (
-          move_id INT PRIMARY KEY NOT NULL,
-          name VARCHAR(30) NOT NULL,
-          description VARCHAR, 
-          pp INT NOT NULL, 
-          power INT 
-           );`);
-    })
-    .then(() => {
-      return db.query(`CREATE TABLE pokemon_moves (
-          pokemon_id INT REFERENCES pokemon(id),
-          move_id INT REFERENCES moves(move_id)
-        )`);
-    })
-    .then(() => {
-      return db.query(`CREATE TABLE types (
-        type_id SERIAL PRIMARY KEY,
-        type VARCHAR(30)
-      )`);
-    })
-    .then(() => {
-      return db.query(`CREATE TABLE pokemon_types (
-        pokemon_id INT REFERENCES pokemon(id),
-        type_id INT REFERENCES types(type_id)
-      )`);
-    })
-    .then(() => {
-      return collectPokemonData(151);
-    })
+let pokemonData;
+
+// Check the db, find out how many pokemon are there
+// If there are 100, start collectPokemonData at 101
+// continue collecting pokedata by Id until you get undefined
+
+const updateDB = () => {
+  return collectPokemonData(151)
     .then((pokemon) => {
       pokemonData = pokemon;
       const pokemonKeys = ["id", "name", "weight", "height", "sprite"];
@@ -83,10 +36,10 @@ const seed = () => {
       const formattedMoves = formatData(moves, listOfKeys);
       const insertMovesQuery = format(
         `INSERT INTO moves 
-          (move_id, name, pp, power, description )
-          VALUES
-          %L
-          RETURNING *`,
+      (move_id, name, pp, power, description )
+      VALUES
+      %L
+      RETURNING *`,
         formattedMoves
       );
       return db.query(insertMovesQuery);
@@ -108,8 +61,8 @@ const seed = () => {
 
       const insertTypesQuery = format(
         `INSERT INTO types 
-        (type)
-        VALUES %L RETURNING *;`,
+    (type)
+    VALUES %L RETURNING *;`,
         formattedTypes
       );
       return db.query(insertTypesQuery);
@@ -124,11 +77,11 @@ const seed = () => {
       );
       const insertTypesDataQuery = format(
         `
-      INSERT INTO pokemon_types
-      (pokemon_id,type_id)
-      VALUES
-      %L;
-      `,
+  INSERT INTO pokemon_types
+  (pokemon_id,type_id)
+  VALUES
+  %L;
+  `,
         arrayOfTypesData
       );
       return db.query(insertTypesDataQuery);
@@ -136,8 +89,6 @@ const seed = () => {
     .catch((err) => console.log(err));
 };
 
-const runSeed = () => {
-  return seed().then(() => db.end());
-};
+updateDB();
 
-runSeed();
+module.exports = updateDB;
