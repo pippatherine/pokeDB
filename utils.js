@@ -1,8 +1,8 @@
 const { fetchSinglePokemonData, fetchMoveByMoveId } = require("./api");
 
-const collectPokemonData = (num) => {
+const collectPokemonData = (endingID, currentNumOfPoke = 0) => {
   const pokemonPromises = [];
-  for (let i = 1; i <= num; i++) {
+  for (let i = currentNumOfPoke + 1; i <= endingID; i++) {
     pokemonPromises.push(fetchSinglePokemonData(i));
   }
   return Promise.all(pokemonPromises);

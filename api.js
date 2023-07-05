@@ -33,7 +33,7 @@ const fetchSinglePokemonData = (id) => {
 };
 
 const fetchMoveByMoveId = (moveId) => {
-  return pokeAPI.get(`/move/${moveId}`, { timeout: 10000 }).then(({ data }) => {
+  return pokeAPI.get(`/move/${moveId}`).then(({ data }) => {
     let formattedDescription;
     if (data.effect_entries.length === 0) {
       formattedDescription = "No description found";
@@ -53,4 +53,14 @@ const fetchMoveByMoveId = (moveId) => {
   });
 };
 
-module.exports = { fetchSinglePokemonData, fetchMoveByMoveId };
+const getNumberOfPokemon = () => {
+  return pokeAPI.get("pokemon-species/?limit=0").then(({ data: { count } }) => {
+    return count;
+  });
+};
+
+module.exports = {
+  fetchSinglePokemonData,
+  fetchMoveByMoveId,
+  getNumberOfPokemon,
+};

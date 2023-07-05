@@ -29,6 +29,11 @@ describe("collectAllPokemonData", () => {
       });
     });
   });
+  test("accepts second parameter which defines starting pokemon Id", () => {
+    return collectPokemonData(4, 2).then((pokemon) => {
+      expect(pokemon.length).toBe(2);
+    });
+  });
 });
 
 describe("collectMoveData", () => {
@@ -554,5 +559,4 @@ describe("createLookupTable", () => {
     createLookupTable(data);
     expect(data).toEqual(dataTwin);
   });
-  
 });

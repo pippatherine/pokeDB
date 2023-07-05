@@ -1,4 +1,8 @@
-const { fetchSinglePokemonData, fetchMoveByMoveId } = require("../api");
+const {
+  fetchSinglePokemonData,
+  fetchMoveByMoveId,
+  getNumberOfPokemon,
+} = require("../api");
 
 describe("fetchSinglePokemonData", () => {
   test("returns an object", () => {
@@ -59,6 +63,15 @@ describe("getMoveByMoveId", () => {
   test('if move has no flavour text, replaces with "No description found"', () => {
     return fetchMoveByMoveId(851).then((move) => {
       expect(move.description).toBe("No description found");
+    });
+  });
+});
+
+describe("getNumberOfPokemon", () => {
+  test("should return correct number", () => {
+    return getNumberOfPokemon().then((number) => {
+      console.log(number);
+      expect(number).toBeGreaterThan(1009);
     });
   });
 });
