@@ -54,9 +54,11 @@ const fetchMoveByMoveId = (moveId) => {
 };
 
 const getNumberOfPokemon = () => {
-  return pokeAPI.get("pokemon-species/?limit=0").then(({ data: { count } }) => {
-    return count;
-  });
+  return pokeAPI
+    .get("/pokemon-species/?limit=0")
+    .then(({ data: { count } }) => {
+      return count;
+    });
 };
 
 module.exports = {
