@@ -27,7 +27,7 @@ const updateDB = () => {
       return getNumberOfPokemon();
     })
     .then((numberOfPokemon) => {
-      return collectPokemonData(numberOfPokemon, numberOfPokemonInDB);
+      return collectPokemonData(20, numberOfPokemonInDB);
     })
     .then((pokemon) => {
       pokemonData = pokemon;
@@ -45,7 +45,7 @@ const updateDB = () => {
     })
     .then(() => {
       //filter existing move ids from moveIds array
-      console.log("line 48");
+
       return db
         .query("SELECT moves.move_id FROM moves;")
         .then(({ rows: existingMoveObjects }) => {
@@ -55,22 +55,20 @@ const updateDB = () => {
         });
     })
     .then((existingMovesArray) => {
-      console.log(existingMovesArray, "existingMovesArray");
-
       const moveIdsArray = findUniqueValues(pokemonData);
 
       // the move id array passed to collect move data needs to only contain values that dont exist in existing moves array!
       const newMoveIds = moveIdsArray.filter(
         (id) => !existingMovesArray.includes(id)
       );
-      console.log(newMoveIds, "newMoveIds");
+
       return collectMoveData(newMoveIds);
     })
     .then((moves) => {
-      if (pokemonData.length === 0) {
+      if (moves.length === 0) {
         return;
       }
-      console.log("line 73");
+
       const listOfKeys = ["id", "name", "pp", "power", "description"];
       const formattedMoves = formatData(moves, listOfKeys);
       const insertMovesQuery = format(
@@ -113,10 +111,10 @@ const updateDB = () => {
       return db.query(insertTypesQuery);
     })
     .then((response) => {
-      if (pokemonData.length === 0) {
+      if (response === undefined) {
         return;
       }
-      const lookupTable = createLookupTable(response.rows.insertedTypesData);
+      const lookupTable = createLookupTable(response.rows);
 
       const arrayOfTypesData = formatJunctionData(
         pokemonData,
