@@ -27,7 +27,7 @@ const updateDB = () => {
       return getNumberOfPokemon();
     })
     .then((numberOfPokemon) => {
-      return collectPokemonData(20, numberOfPokemonInDB);
+      return collectPokemonData(numberOfPokemon, numberOfPokemonInDB);
     })
     .then((pokemon) => {
       pokemonData = pokemon;
@@ -44,8 +44,6 @@ const updateDB = () => {
       return db.query(insertPokemonQuery);
     })
     .then(() => {
-      //filter existing move ids from moveIds array
-
       return db
         .query("SELECT moves.move_id FROM moves;")
         .then(({ rows: existingMoveObjects }) => {
@@ -93,23 +91,41 @@ const updateDB = () => {
       return db.query(insertMovesDataQuery);
     })
     .then(() => {
-      if (pokemonData.length === 0) {
-        return;
-      }
+      return db
+        .query("SELECT types.type FROM types;")
+        .then(({ rows: existingTypeObjects }) => {
+          const existTypes = existingTypeObjects;
+
+          return existingTypeObjects.map((typeObject) => {
+            return typeObject.type;
+          });
+        });
+    })
+    .then((existingTypes) => {
       const arrayOfTypes = findUniqueValues(pokemonData, "types");
 
-      const formattedTypes = arrayOfTypes.map((type) => {
+      const newTypes = arrayOfTypes.filter((typeName) => {
+        return !existingTypes.includes(typeName);
+      });
+
+      return newTypes.map((type) => {
         return [type];
       });
+    })
+    .then((types) => {
+      if (types.length === 0) {
+        return;
+      }
 
       const insertTypesQuery = format(
         `INSERT INTO types 
     (type)
     VALUES %L RETURNING *;`,
-        formattedTypes
+        types
       );
       return db.query(insertTypesQuery);
     })
+
     .then((response) => {
       if (response === undefined) {
         return;
