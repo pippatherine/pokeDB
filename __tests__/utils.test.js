@@ -5,6 +5,7 @@ const {
   formatJunctionData,
   formatData,
   createLookupTable,
+  findNewUniqueValues,
 } = require("../utils");
 
 describe("collectAllPokemonData", () => {
@@ -558,5 +559,41 @@ describe("createLookupTable", () => {
     ];
     createLookupTable(data);
     expect(data).toEqual(dataTwin);
+  });
+});
+
+describe("findNewUniqueValues", () => {
+  test("should only return the unique values comparing the old moves and the new moves from pokemon", () => {
+    const newValues = ["dragon", "fish", "blue", "green"];
+    const oldValues = ["dragon", "green", "yellow", "purple"];
+    const expected = ["fish", "blue"];
+    expect(findNewUniqueValues(oldValues, newValues)).toEqual(expected);
+  });
+  test("test with ids ", () => {
+    const newValues = [1, 2, 3];
+    const oldValues = [2, 3, 4];
+    const expected = [1];
+    expect(findNewUniqueValues(oldValues, newValues)).toEqual(expected);
+  });
+  test("shoudlnt mutate the old array", () => {
+    const oldArray = [1, 2, 3];
+    const oldArrayTwin = [1, 2, 3];
+    const newArray = [2, 3, 4];
+    findNewUniqueValues(oldArray, newArray);
+    expect(oldArray).toEqual(oldArrayTwin);
+  });
+  test("shoudlnt mutate the new array", () => {
+    const newArray = [1, 2, 3];
+    const newArrayTwin = [1, 2, 3];
+    const oldArray = [2, 3, 4];
+    findNewUniqueValues(oldArray, newArray);
+    expect(newArray).toEqual(newArrayTwin);
+  });
+  test("should return a new array", () => {
+    const newValues = [1, 2, 3];
+    const oldValues = [2, 3, 4];
+    const output = findNewUniqueValues(oldValues, newValues);
+    expect(output).not.toBe(newValues);
+    expect(output).not.toBe(oldValues);
   });
 });

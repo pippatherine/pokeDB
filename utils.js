@@ -66,7 +66,14 @@ const createLookupTable = (data, key = "type", value = "type_id") => {
   return lookup;
 };
 
+const findNewUniqueValues = (existingValues, newValues) => {
+  return newValues.filter((newValue) => {
+    return !existingValues.includes(newValue);
+  });
+};
+
 module.exports = {
+  findNewUniqueValues,
   collectPokemonData,
   collectMoveData,
   formatJunctionData,

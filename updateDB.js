@@ -6,16 +6,13 @@ const {
   collectMoveData,
   formatData,
   createLookupTable,
+  findNewUniqueValues,
 } = require("./utils");
 const db = require("./connection");
 const { getNumberOfPokemon } = require("./api");
 
 let pokemonData;
 let numberOfPokemonInDB;
-// Check the db, find out how many pokemon there are
-// If there are 100, start collectPokemonData at 101
-// continue collecting pokedata by Id until you get undefined
-// TODO: duplicates of types & moves because checking new not checking old
 
 const updateDB = () => {
   return db
@@ -27,7 +24,7 @@ const updateDB = () => {
       return getNumberOfPokemon();
     })
     .then((numberOfPokemon) => {
-      return collectPokemonData(numberOfPokemon, numberOfPokemonInDB);
+      return collectPokemonData(25, numberOfPokemonInDB);
     })
     .then((pokemon) => {
       pokemonData = pokemon;
@@ -55,11 +52,7 @@ const updateDB = () => {
     .then((existingMovesArray) => {
       const moveIdsArray = findUniqueValues(pokemonData);
 
-      // the move id array passed to collect move data needs to only contain values that dont exist in existing moves array!
-      const newMoveIds = moveIdsArray.filter(
-        (id) => !existingMovesArray.includes(id)
-      );
-
+      const newMoveIds = findNewUniqueValues(existingMovesArray, moveIdsArray);
       return collectMoveData(newMoveIds);
     })
     .then((moves) => {
@@ -94,8 +87,6 @@ const updateDB = () => {
       return db
         .query("SELECT types.type FROM types;")
         .then(({ rows: existingTypeObjects }) => {
-          const existTypes = existingTypeObjects;
-
           return existingTypeObjects.map((typeObject) => {
             return typeObject.type;
           });
@@ -104,9 +95,7 @@ const updateDB = () => {
     .then((existingTypes) => {
       const arrayOfTypes = findUniqueValues(pokemonData, "types");
 
-      const newTypes = arrayOfTypes.filter((typeName) => {
-        return !existingTypes.includes(typeName);
-      });
+      const newTypes = findNewUniqueValues(existingTypes, arrayOfTypes);
 
       return newTypes.map((type) => {
         return [type];

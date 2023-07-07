@@ -4,14 +4,52 @@ const {
   getNumberOfPokemon,
 } = require("../api");
 
+class MockObject {
+  constructor() {
+    this.pokemonObject = {
+      data: {
+        moves: [
+          { move: { url: "1https://pokeapi.co/api/v2/move/1/" } },
+          { move: { url: "https://pokeapi.co/api/v2/move/4/" } },
+          { move: { url: "https://pokeapi.co/api/v2/move/5/" } },
+        ],
+        types: [
+          { type: { name: "evie" } },
+          { type: { name: "millie" } },
+          { type: { name: "katherine" } },
+        ],
+        weight: 2,
+        height: 10,
+        species: { name: "hev" },
+        sprites: {
+          front_default:
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/125.png",
+        },
+      },
+    };
+  }
+  get(path) {
+    const promise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        return resolve(this.pokemonObject);
+      }, 2000);
+    });
+    return promise;
+  }
+}
 describe("fetchSinglePokemonData", () => {
   test("returns an object", () => {
-    const output = fetchSinglePokemonData(1);
+    const mockApi = new MockObject();
+    const output = fetchSinglePokemonData(1, mockApi);
+
     expect(typeof output).toBe("object");
     expect(Array.isArray(output)).toBe(false);
   });
-  test("returned object has the correct properties", () => {
-    return fetchSinglePokemonData(1).then((pokemon) => {
+  test.only("returned object has the correct properties", () => {
+    const mockApi = new MockObject();
+
+    return fetchSinglePokemonData(1, mockApi).then((pokemon) => {
+      console.log(pokemon);
       expect(pokemon).toMatchObject({
         name: expect.any(String),
         height: expect.any(Number),

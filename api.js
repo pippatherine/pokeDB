@@ -4,10 +4,10 @@ const pokeAPI = axios.create({
   baseURL: "https://pokeapi.co/api/v2",
 });
 
-const fetchSinglePokemonData = (id) => {
+const fetchSinglePokemonData = (id, apiObject) => {
   let pokemonObject = {};
 
-  return pokeAPI.get(`/pokemon/${id}`, { timeout: 10000 }).then(({ data }) => {
+  return apiObject.get(`/pokemon/${id}`).then(({ data }) => {
     const typesArray = data.types.map((typeObject) => {
       return typeObject.type.name;
     });
