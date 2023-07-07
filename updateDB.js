@@ -24,7 +24,7 @@ const updateDB = () => {
       return getNumberOfPokemon();
     })
     .then((numberOfPokemon) => {
-      return collectPokemonData(25, numberOfPokemonInDB);
+      return collectPokemonData(numberOfPokemon, numberOfPokemonInDB);
     })
     .then((pokemon) => {
       pokemonData = pokemon;

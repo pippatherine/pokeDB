@@ -4,7 +4,7 @@ const pokeAPI = axios.create({
   baseURL: "https://pokeapi.co/api/v2",
 });
 
-const fetchSinglePokemonData = (id, apiObject) => {
+const fetchSinglePokemonData = (id, apiObject = pokeAPI) => {
   let pokemonObject = {};
 
   return apiObject.get(`/pokemon/${id}`).then(({ data }) => {
@@ -32,8 +32,8 @@ const fetchSinglePokemonData = (id, apiObject) => {
   });
 };
 
-const fetchMoveByMoveId = (moveId) => {
-  return pokeAPI.get(`/move/${moveId}`).then(({ data }) => {
+const fetchMoveByMoveId = (moveId, apiObject = pokeAPI) => {
+  return apiObject.get(`/move/${moveId}`).then(({ data }) => {
     let formattedDescription;
     if (data.effect_entries.length === 0) {
       formattedDescription = "No description found";
@@ -53,12 +53,10 @@ const fetchMoveByMoveId = (moveId) => {
   });
 };
 
-const getNumberOfPokemon = () => {
-  return pokeAPI
-    .get("/pokemon-species/?limit=0")
-    .then(({ data: { count } }) => {
-      return count;
-    });
+const getNumberOfPokemon = (apiObj = pokeAPI) => {
+  return apiObj.get("/pokemon-species/?limit=0").then(({ data: { count } }) => {
+    return count;
+  });
 };
 
 module.exports = {

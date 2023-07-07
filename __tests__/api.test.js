@@ -6,33 +6,84 @@ const {
 
 class MockObject {
   constructor() {
-    this.pokemonObject = {
+    this.pokemon1 = {
       data: {
         moves: [
-          { move: { url: "1https://pokeapi.co/api/v2/move/1/" } },
+          { move: { url: "https://pokeapi.co/api/v2/move/1/" } },
           { move: { url: "https://pokeapi.co/api/v2/move/4/" } },
           { move: { url: "https://pokeapi.co/api/v2/move/5/" } },
         ],
         types: [
-          { type: { name: "evie" } },
-          { type: { name: "millie" } },
-          { type: { name: "katherine" } },
+          { type: { name: "type1" } },
+          { type: { name: "type2" } },
+          { type: { name: "type3" } },
         ],
         weight: 2,
         height: 10,
-        species: { name: "hev" },
+        species: { name: "name1" },
         sprites: {
           front_default:
             "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/125.png",
         },
       },
     };
+    this.pokemon2 = {
+      data: {
+        moves: [{ move: { url: "https://pokeapi.co/api/v2/move/1/" } }],
+        types: [
+          { type: { name: "type1" } },
+          { type: { name: "type2" } },
+          { type: { name: "type3" } },
+        ],
+        weight: 2,
+        height: 10,
+        species: { name: "species1" },
+        sprites: {
+          front_default:
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/125.png",
+        },
+      },
+    };
+    this.move1 = {
+      data: {
+        name: "name1",
+        pp: 1,
+        power: 10,
+        id: 1,
+        effect_entries: [{ effect: "effect text" }],
+      },
+    };
+    this.move2 = {
+      data: {
+        name: "name2",
+        pp: 1,
+        power: 10,
+        id: 2,
+        effect_entries: [],
+      },
+    };
+    this.count = {
+      data: { count: 1010 },
+    };
   }
   get(path) {
     const promise = new Promise((resolve, reject) => {
       setTimeout(() => {
-        return resolve(this.pokemonObject);
-      }, 2000);
+        switch (path) {
+          case "/pokemon/1":
+            return resolve(this.pokemon1);
+          case "/pokemon/2":
+            return resolve(this.pokemon2);
+          case "/move/1":
+            return resolve(this.move1);
+          case "/move/2":
+            return resolve(this.move2);
+          case "/pokemon-species/?limit=0":
+            return resolve(this.count);
+          default:
+            break;
+        }
+      }, 1);
     });
     return promise;
   }
@@ -45,11 +96,9 @@ describe("fetchSinglePokemonData", () => {
     expect(typeof output).toBe("object");
     expect(Array.isArray(output)).toBe(false);
   });
-  test.only("returned object has the correct properties", () => {
+  test("returned object has the correct properties", () => {
     const mockApi = new MockObject();
-
     return fetchSinglePokemonData(1, mockApi).then((pokemon) => {
-      console.log(pokemon);
       expect(pokemon).toMatchObject({
         name: expect.any(String),
         height: expect.any(Number),
@@ -59,36 +108,42 @@ describe("fetchSinglePokemonData", () => {
     });
   });
   test("returned object should contain array of types", () => {
-    return fetchSinglePokemonData(1).then((pokemon) => {
-      expect(pokemon.types).toEqual(["grass", "poison"]);
+    const mockAPI = new MockObject();
+    return fetchSinglePokemonData(1, mockAPI).then((pokemon) => {
+      expect(pokemon.types).toEqual(["type1", "type2", "type3"]);
     });
   });
   test("return the correct amount of move ids ", () => {
-    return fetchSinglePokemonData(1).then((pokemon) => {
-      expect(pokemon.moveIds).toHaveLength(83);
+    const mockAPI = new MockObject();
+    return fetchSinglePokemonData(1, mockAPI).then((pokemon) => {
+      expect(pokemon.moveIds).toHaveLength(3);
     });
   });
   test("returned object should contain an array with a single move id if the pokemon has one move (ditto)", () => {
-    return fetchSinglePokemonData(132).then((pokemon) => {
-      expect(pokemon.moveIds).toEqual([144]);
+    const mockAPI = new MockObject();
+    return fetchSinglePokemonData(2, mockAPI).then((pokemon) => {
+      expect(pokemon.moveIds).toEqual([1]);
     });
   });
   test("returned object should contain an array of move ids", () => {
-    return fetchSinglePokemonData(11).then((pokemon) => {
-      expect(pokemon.moveIds).toEqual([81, 106, 334, 450, 527]);
+    const mockAPI = new MockObject();
+    return fetchSinglePokemonData(1, mockAPI).then((pokemon) => {
+      expect(pokemon.moveIds).toEqual([1, 4, 5]);
     });
   });
 });
 
 describe("getMoveByMoveId", () => {
   test("should return an object", () => {
-    return fetchMoveByMoveId(1).then((move) => {
+    const mockAPI = new MockObject();
+    return fetchMoveByMoveId(1, mockAPI).then((move) => {
       expect(Array.isArray(move)).toBe(false);
       expect(typeof move).toBe("object");
     });
   });
   test("should return an object with correct keys", () => {
-    return fetchMoveByMoveId(1).then((move) => {
+    const mockAPI = new MockObject();
+    return fetchMoveByMoveId(1, mockAPI).then((move) => {
       expect(move).toMatchObject({
         id: expect.any(Number),
         name: expect.any(String),
@@ -98,8 +153,9 @@ describe("getMoveByMoveId", () => {
       });
     });
   });
-  test('if move has no flavour text, replaces with "No description found"', () => {
-    return fetchMoveByMoveId(851).then((move) => {
+  test('if move has no effect text, replaces with "No description found"', () => {
+    const mockAPI = new MockObject();
+    return fetchMoveByMoveId(2, mockAPI).then((move) => {
       expect(move.description).toBe("No description found");
     });
   });
@@ -107,8 +163,8 @@ describe("getMoveByMoveId", () => {
 
 describe("getNumberOfPokemon", () => {
   test("should return correct number", () => {
-    return getNumberOfPokemon().then((number) => {
-      console.log(number);
+    const mockAPI = new MockObject();
+    return getNumberOfPokemon(mockAPI).then((number) => {
       expect(number).toBeGreaterThan(1009);
     });
   });
