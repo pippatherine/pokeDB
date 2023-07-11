@@ -53,6 +53,23 @@ const fetchMoveByMoveId = (moveId, apiObject = pokeAPI) => {
   });
 };
 
+const collectPokemonData = (endingID, currentNumOfPoke = 0) => {
+  const pokemonPromises = [];
+  for (let i = currentNumOfPoke + 1; i <= endingID; i++) {
+    pokemonPromises.push(fetchSinglePokemonData(i));
+  }
+
+  return Promise.all(pokemonPromises);
+};
+
+const collectMoveData = (moveIdArray, apiObj = pokeAPI) => {
+  const movePromises = [];
+  for (let i = 0; i < moveIdArray.length; i++) {
+    movePromises.push(fetchMoveByMoveId(moveIdArray[i], apiObj));
+  }
+  return Promise.all(movePromises);
+};
+
 const getNumberOfPokemon = (apiObj = pokeAPI) => {
   return apiObj.get("/pokemon-species/?limit=0").then(({ data: { count } }) => {
     return count;
@@ -63,4 +80,6 @@ module.exports = {
   fetchSinglePokemonData,
   fetchMoveByMoveId,
   getNumberOfPokemon,
+  collectMoveData,
+  collectPokemonData,
 };

@@ -6,59 +6,10 @@ const {
   formatData,
   createLookupTable,
   findNewUniqueValues,
+  formatMoveIdArray,
 } = require("../utils");
 
-describe("collectAllPokemonData", () => {
-  test("should return an array", () => {
-    return collectPokemonData(20).then((pokemon) => {
-      expect(Array.isArray(pokemon)).toBe(true);
-    });
-  });
-  test("check the length of the array and shape of the object", () => {
-    return collectPokemonData(20).then((pokemon) => {
-      expect(pokemon.length).toBe(20);
-      pokemon.forEach((aPokemon) => {
-        expect(aPokemon).toMatchObject({
-          id: expect.any(Number),
-          name: expect.any(String),
-          weight: expect.any(Number),
-          height: expect.any(Number),
-          types: expect.any(Array),
-          moveIds: expect.any(Array),
-          sprite: expect.any(String),
-        });
-      });
-    });
-  });
-  test("accepts second parameter which defines starting pokemon Id", () => {
-    return collectPokemonData(4, 2).then((pokemon) => {
-      expect(pokemon.length).toBe(2);
-    });
-  });
-});
 
-describe("collectMoveData", () => {
-  test("should return an array", () => {
-    const moveIdArray = [1, 2];
-    return collectMoveData(moveIdArray).then((moves) => {
-      expect(moves).toBeInstanceOf(Array);
-    });
-  });
-  test("should return move objects when given an array of IDs", () => {
-    const moveIdArray = [1, 2, 3];
-    return collectMoveData(moveIdArray).then((moves) => {
-      expect(moves.length).toBe(moveIdArray.length);
-      moves.forEach((move) => {
-        expect(move).toMatchObject({
-          name: expect.any(String),
-          pp: expect.any(Number),
-          power: expect.any(Number),
-          description: expect.any(String),
-        });
-      });
-    });
-  });
-});
 
 describe("formatJunctionData", () => {
   test("should return an array of arrays", () => {
@@ -595,5 +546,24 @@ describe("findNewUniqueValues", () => {
     const output = findNewUniqueValues(oldValues, newValues);
     expect(output).not.toBe(newValues);
     expect(output).not.toBe(oldValues);
+  });
+});
+
+describe("formatMoveIdArray", () => {
+  test("should return single value array when passed pokedata with single move", () => {
+    const pokeData = {
+      moves: [{ move: { url: "https://pokeapi.co/api/v2/move/1/" } }],
+    };
+    expect(formatMoveIdArray(pokeData)).toEqual([1]);
+  });
+  test("should return multiple value array when passed pokedata with multiple moves", () => {
+    const pokeData = {
+      moves: [
+        { move: { url: "https://pokeapi.co/api/v2/move/1/" } },
+        { move: { url: "https://pokeapi.co/api/v2/move/4/" } },
+        { move: { url: "https://pokeapi.co/api/v2/move/5/" } },
+      ],
+    };
+    expect(formatMoveIdArray(pokeData)).toEqual([1, 4, 5]);
   });
 });

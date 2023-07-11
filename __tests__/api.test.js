@@ -2,6 +2,8 @@ const {
   fetchSinglePokemonData,
   fetchMoveByMoveId,
   getNumberOfPokemon,
+  collectMoveData,
+  collectPokemonData,
 } = require("../api");
 
 class MockObject {
@@ -166,6 +168,58 @@ describe("getNumberOfPokemon", () => {
     const mockAPI = new MockObject();
     return getNumberOfPokemon(mockAPI).then((number) => {
       expect(number).toBeGreaterThan(1009);
+    });
+  });
+});
+
+describe("collectAllPokemonData", () => {
+  test("should return an array", () => {
+    const mockAPI = new MockObject();
+    return collectPokemonData(2, 0, mockAPI).then((pokemon) => {
+      expect(Array.isArray(pokemon)).toBe(true);
+    });
+  });
+  test("check the length of the array and shape of the object", () => {
+    const mockAPI = new MockObject();
+    return collectPokemonData(2, 0, mockAPI).then((pokemon) => {
+      expect(pokemon.length).toBe(2);
+      pokemon.forEach((aPokemon) => {
+        expect(aPokemon).toMatchObject({
+          id: expect.any(Number),
+          name: expect.any(String),
+          weight: expect.any(Number),
+          height: expect.any(Number),
+          types: expect.any(Array),
+          moveIds: expect.any(Array),
+          sprite: expect.any(String),
+        });
+      });
+    });
+  });
+});
+
+describe("collectMoveData", () => {
+  test("should return an array", () => {
+    const mockAPI = new MockObject();
+    const moveIdArray = [1, 2];
+    return collectMoveData(moveIdArray, mockAPI).then((moves) => {
+      console.log(moves);
+      expect(moves).toBeInstanceOf(Array);
+    });
+  });
+  test("should return move objects when given an array of IDs", () => {
+    const mockAPI = new MockObject();
+    const moveIdArray = [1, 2];
+    return collectMoveData(moveIdArray, mockAPI).then((moves) => {
+      expect(moves.length).toBe(moveIdArray.length);
+      moves.forEach((move) => {
+        expect(move).toMatchObject({
+          name: expect.any(String),
+          pp: expect.any(Number),
+          power: expect.any(Number),
+          description: expect.any(String),
+        });
+      });
     });
   });
 });

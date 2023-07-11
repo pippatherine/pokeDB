@@ -1,20 +1,6 @@
 const { fetchSinglePokemonData, fetchMoveByMoveId } = require("./api");
 
-const collectPokemonData = (endingID, currentNumOfPoke = 0) => {
-  const pokemonPromises = [];
-  for (let i = currentNumOfPoke + 1; i <= endingID; i++) {
-    pokemonPromises.push(fetchSinglePokemonData(i));
-  }
-  return Promise.all(pokemonPromises);
-};
 
-const collectMoveData = (moveIdArray) => {
-  const movePromises = [];
-  for (let i = 0; i < moveIdArray.length; i++) {
-    movePromises.push(fetchMoveByMoveId(moveIdArray[i]));
-  }
-  return Promise.all(movePromises);
-};
 
 const findUniqueValues = (pokemonData, key = "moveIds") => {
   let newArray = [];
@@ -72,6 +58,16 @@ const findNewUniqueValues = (existingValues, newValues) => {
   });
 };
 
+const formatMoveIdArray = (pokeData) => {
+  const moveIdArray = pokeData.moves.map((moveObject) => {
+    const moveURL = moveObject.move.url;
+    const moveArray = moveURL.split("/");
+    const moveId = parseInt(moveArray[moveArray.length - 2]);
+    return moveId;
+  });
+  return moveIdArray;
+};
+
 module.exports = {
   findNewUniqueValues,
   collectPokemonData,
@@ -80,4 +76,5 @@ module.exports = {
   findUniqueValues,
   formatData,
   createLookupTable,
+  formatMoveIdArray,
 };
