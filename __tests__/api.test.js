@@ -203,7 +203,6 @@ describe("collectMoveData", () => {
     const mockAPI = new MockObject();
     const moveIdArray = [1, 2];
     return collectMoveData(moveIdArray, mockAPI).then((moves) => {
-      console.log(moves);
       expect(moves).toBeInstanceOf(Array);
     });
   });

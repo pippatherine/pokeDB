@@ -1,15 +1,13 @@
 const {
-  collectPokemonData,
-  collectMoveData,
   findUniqueValues,
   formatJunctionData,
   formatData,
   createLookupTable,
   findNewUniqueValues,
   formatMoveIdArray,
+  formatTypeNamesArray,
+  checkDescription,
 } = require("../utils");
-
-
 
 describe("formatJunctionData", () => {
   test("should return an array of arrays", () => {
@@ -565,5 +563,101 @@ describe("formatMoveIdArray", () => {
       ],
     };
     expect(formatMoveIdArray(pokeData)).toEqual([1, 4, 5]);
+  });
+  test("should not mutate the passed in array ", () => {
+    const pokeData = {
+      moves: [{ move: { url: "https://pokeapi.co/api/v2/move/1/" } }],
+    };
+    const pokeDataTwin = {
+      moves: [{ move: { url: "https://pokeapi.co/api/v2/move/1/" } }],
+    };
+    formatMoveIdArray(pokeData);
+    expect(pokeData).toEqual(pokeDataTwin);
+  });
+  test("should return a new array", () => {
+    const pokeData = {
+      moves: [{ move: { url: "https://pokeapi.co/api/v2/move/1/" } }],
+    };
+    expect(formatMoveIdArray(pokeData)).not.toBe(pokeData);
+  });
+});
+
+describe("formatTypeNamesArray", () => {
+  test("should return an array of type names", () => {
+    const pokeData = {
+      moves: [
+        { move: { url: "https://pokeapi.co/api/v2/move/1/" } },
+        { move: { url: "https://pokeapi.co/api/v2/move/4/" } },
+        { move: { url: "https://pokeapi.co/api/v2/move/5/" } },
+      ],
+      types: [
+        { type: { name: "type1" } },
+        { type: { name: "type2" } },
+        { type: { name: "type3" } },
+      ],
+    };
+
+    expect(formatTypeNamesArray(pokeData)).toEqual(["type1", "type2", "type3"]);
+  });
+  test("shouldnt mutate the passed in array", () => {
+    const pokeData = {
+      moves: [
+        { move: { url: "https://pokeapi.co/api/v2/move/1/" } },
+        { move: { url: "https://pokeapi.co/api/v2/move/4/" } },
+        { move: { url: "https://pokeapi.co/api/v2/move/5/" } },
+      ],
+      types: [
+        { type: { name: "type1" } },
+        { type: { name: "type2" } },
+        { type: { name: "type3" } },
+      ],
+    };
+    const pokeDataTwin = {
+      moves: [
+        { move: { url: "https://pokeapi.co/api/v2/move/1/" } },
+        { move: { url: "https://pokeapi.co/api/v2/move/4/" } },
+        { move: { url: "https://pokeapi.co/api/v2/move/5/" } },
+      ],
+      types: [
+        { type: { name: "type1" } },
+        { type: { name: "type2" } },
+        { type: { name: "type3" } },
+      ],
+    };
+    formatTypeNamesArray(pokeData);
+    expect(pokeData).toEqual(pokeDataTwin);
+  });
+  test("should return a new array", () => {
+    const pokeData = {
+      types: [
+        { type: { name: "type1" } },
+        { type: { name: "type2" } },
+        { type: { name: "type3" } },
+      ],
+    };
+    expect(formatTypeNamesArray(pokeData)).not.toBe(pokeData);
+  });
+});
+
+describe("checkDescription", () => {
+  test('should change to "No description found" if no description', () => {
+    const pokeData = {
+      name: "name2",
+      pp: 1,
+      power: 10,
+      id: 2,
+      effect_entries: [],
+    };
+    expect(checkDescription(pokeData)).toBe("No description found");
+  });
+  test("should return the text entrey if available", () => {
+    const pokeData = {
+      name: "name1",
+      pp: 1,
+      power: 10,
+      id: 1,
+      effect_entries: [{ effect: "effect text" }],
+    };
+    expect(checkDescription(pokeData)).toBe("effect text");
   });
 });

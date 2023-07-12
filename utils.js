@@ -1,7 +1,5 @@
 const { fetchSinglePokemonData, fetchMoveByMoveId } = require("./api");
 
-
-
 const findUniqueValues = (pokemonData, key = "moveIds") => {
   let newArray = [];
   for (let i = 0; i < pokemonData.length; i++) {
@@ -68,13 +66,31 @@ const formatMoveIdArray = (pokeData) => {
   return moveIdArray;
 };
 
+const formatTypeNamesArray = (pokeData) => {
+  return (typesArray = pokeData.types.map((typeObject) => {
+    return typeObject.type.name;
+  }));
+};
+
+const checkDescription = (data) => {
+  let formattedDescription;
+  if (data.effect_entries.length === 0) {
+    return (formattedDescription = "No description found");
+  } else {
+    return (formattedDescription = data.effect_entries[0].effect.replaceAll(
+      "\n",
+      " "
+    ));
+  }
+};
+
 module.exports = {
   findNewUniqueValues,
-  collectPokemonData,
-  collectMoveData,
   formatJunctionData,
   findUniqueValues,
   formatData,
   createLookupTable,
   formatMoveIdArray,
+  formatTypeNamesArray,
+  checkDescription,
 };
